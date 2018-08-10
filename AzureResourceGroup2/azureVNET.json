@@ -1,0 +1,131 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Environment"
+      }
+    },
+    "vnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/16",
+      "metadata": {
+        "description": "CIDR block representing the VNET Address Space"
+      }
+    },
+    "webSubnetAdressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/28",
+      "metadata": {
+        "description": "CIDR block representing the Web Tier Subnet Address Space"
+      }
+    },
+    "appSubnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.1.0/28",
+      "metadata": {
+        "description": "CIDR block representing the App Tier Subnet Address Space"
+      }
+    },
+    "dbSubnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.2.0/28",
+      "metadata": {
+        "description": "CIDR block representing the Database Tier Subnet Address Space"
+      }
+    },
+    "adSubnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.3.0/28",
+      "metadata": {
+        "description": "CIDR block representing the AD Domain Services Tier Subnet Address Space"
+      }
+    },
+    "gwSubnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.4.0/28",
+      "metadata": {
+        "description": "CIDR block representing the VPN Gateway Subnet Address Space"
+      }
+    }
+  },
+  "variables": {
+    "vnetName": "[concat(parameters('environmentName'),'-','VNET')]",
+    "webSubnetName": "[concat(parameters('environmentName'),'-','WebSubnet')]",
+    "appSubnetName": "[concat(parameters('environmentName'),'-','AppSubnet')]",
+    "dbSubnetName": "[concat(parameters('environmentName'),'-','DbSubnet')]",
+    "gwSubnetName": "[concat(parameters('environmentName'),'-','GatewaySubnet')]",
+    "adSubnetName": "[concat(parameters('environmentName'),'-','ADSubnet')]"
+  },
+  "resources": [
+    {
+      "name": "[variables('vnetName')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2018-02-01",
+      "dependsOn": [ ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('vnetAddressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('webSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('webSubnetAdressPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('appSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('appSubnetAddressPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('dbSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('dbSubnetAddressPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('adSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('adSubnetAddressPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('gwSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('gwSubnetAddressPrefix')]"
+            }
+          }
+        ]
+      }
+    }],
+  "outputs": {
+    "webSubnetRef": {
+      "value": "[concat(resourceId('Microsoft.Network/virtualNetworks/', variables('vnetName')), '/subnets/',variables('webSubnetName'))]",
+      "type": "string"
+    },
+    "appSubnetRef": {
+      "value": "[concat(resourceId('Microsoft.Network/virtualNetworks/', variables('vnetName')), '/subnets/',variables('appSubnetName'))]",
+      "type": "string"
+    },
+    "dbSubnetRef": {
+      "value": "[concat(resourceId('Microsoft.Network/virtualNetworks/', variables('vnetName')), '/subnets/',variables('dbSubnetName'))]",
+      "type": "string"
+    },
+    "adSubnetRef": {
+      "value": "[concat(resourceId('Microsoft.Network/virtualNetworks/', variables('vnetName')), '/subnets/',variables('adSubnetName'))]",
+      "type": "string"
+    },
+    "gwSubnetRef": {
+      "value": "[concat(resourceId('Microsoft.Network/virtualNetworks/', variables('vnetName')), '/subnets/',variables('gwSubnetName'))]",
+      "type": "string"
+    }
+  }
+}
